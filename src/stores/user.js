@@ -1,3 +1,5 @@
+//NOTA:EN ESTE ARCHIVO ESTÁ TODO LO DE AUTENTICACIONES.
+
 import {defineStore} from 'pinia';
 //Importaciones para registrar usuarios.logearlos y terminar su sesión  en firebase.
 import {createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut } from "firebase/auth";
@@ -6,6 +8,10 @@ import { auth } from '../firebase/firebaseConfig';
 import {onAuthStateChanged } from "firebase/auth";
 //Importaciones para hacer el push al home y fuera de él.
 import router from '../router/router.js';
+
+//Importo el otro store para reiniciarlo cuando el usuario le de en logout, que activa
+//el logoutUser que cierra la sesión.
+import {useDatabaseStore} from '../stores/database.js';
 
 
 export const useUserStore=defineStore('userStore',{
@@ -43,15 +49,18 @@ export const useUserStore=defineStore('userStore',{
         }
       },
       async logoutUser(){
-        // this.loadingUser=true;
+         //Reinicio el otro store cuando se manda llamar la acción de cerrar sesión...
+         const databaseStore=useDatabaseStore();
+        
         try{
           await signOut(auth);
           this.userData=null;
           router.push('/login');
+          databaseStore.$reset(); //Si se cierra sesión con éxito reseteo el store que contiene los documentos.
+
+         
         }catch(err){
           console.log(err);
-        }finally{
-          // this.loadingUser=false;
         }
       },
       currentUser(){
@@ -67,6 +76,8 @@ export const useUserStore=defineStore('userStore',{
                     this.userData={email:user.email,uid:user.uid};
                   }else{
                     this.userData=null;
+                    const databaseStore=useDatabaseStore();
+                    databaseStore.$reset(); 
                   }
                   resolve(user); //Retorna el usuario independiente de si existe o no.
               },err=>reject(err));

@@ -18,4 +18,11 @@ initializeApp(firebaseConfig);
 import { getAuth } from "firebase/auth";
 
 const auth = getAuth();
-export {auth};
+
+
+//3.Configuraciones para el Firestore.
+import {getFirestore} from 'firebase/firestore/lite';
+const db=getFirestore();
+
+//Realizo todas las exportaciones necesarias
+export {auth,db};

@@ -4,6 +4,7 @@ import {createRouter,createWebHistory} from 'vue-router';
 import Home from '../views/Home.vue';
 import Login from '../views/Login.vue';
 import Register from '../views/Register.vue';
+import Editar from '../views/Editar.vue';
 //Importo el store donde está mi método para identificar si hay una sesión acticva en mi app.
 import {useUserStore} from '../stores/user.js';
 
@@ -28,6 +29,11 @@ const routes=[
     {
         path:'/',
         component:Home,
+        beforeEnter:requireAuth
+    },
+    {
+        path:'/editar/:id',
+        component:Editar,
         beforeEnter:requireAuth
     },
     {
